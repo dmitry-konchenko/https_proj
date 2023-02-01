@@ -1,7 +1,11 @@
 import os
 from sys import argv
 import pygame
-from geocode_api import get_coordinates
+
+from geocode_api import (
+    get_coordinates,
+    get_coordinates_and_span,
+)
 from static_maps_api import get_map
 
 
@@ -10,23 +14,31 @@ def main() -> None:
 
     if toponym_to_find == '':
         print('No data')
-        exit()
+        return
 
+    # Показываем карту с фиксированным масштабом.
     lat, lon = get_coordinates(toponym_to_find)
     show_map((lat, lon), (0.005, 0.005), 'map')
 
+    # Показываем карту с масштабом, подобранным по заданному объекту.
+    (lat, lon), (dx, dy) = get_coordinates_and_span(toponym_to_find)
+    show_map((lat, lon), (dx, dy), 'map')
 
-def show_map(ll: tuple[float, float], spn: tuple[float, float], map_type: str) -> None:
+
+def show_map(*, ll: tuple[float, float], spn: tuple[float, float], map_type: str) -> None:
     map_filename = get_map(ll, spn, map_type)
+    # Инициализируем pygame
     pygame.init()
     screen = pygame.display.set_mode((600, 450))
+    # Рисуем картинку, загружаемую из только что созданного файла.
     screen.blit(pygame.image.load(map_filename), (0, 0))
+    # Переключаем экран и ждем закрытия окна.
     pygame.display.flip()
     while pygame.event.wait().type != pygame.QUIT:
         pass
     pygame.quit()
+    # Удаляем за собой файл с изображением.
     os.remove(map_filename)
 
 
-if __name__ == '__main__':
-    main()
+main()
