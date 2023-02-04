@@ -1,7 +1,7 @@
 from sys import argv
 from pygame_show_map import show_map
 
-from geocode_api import (
+from geocoder_api import (
     get_coordinates,
     get_coordinates_and_span,
 )
