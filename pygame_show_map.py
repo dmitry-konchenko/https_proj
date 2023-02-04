@@ -1,12 +1,12 @@
 import os
-
 import pygame
+
 from static_maps_api import get_map
 
 
-def show_map(*, ll: tuple[float, float], spn: tuple[float, float], map_type: str,
-             **kwarg: tuple[float, float]) -> None:
-    map_filename = get_map(ll=ll, spn=spn, map_type=map_type, **kwarg)
+def show_map(*, ll: tuple[float, float] = None, spn: tuple[float, float], map_type: str,
+             pt: tuple[object, ...] | str = None) -> None:
+    map_filename = get_map(ll=ll, spn=spn, map_type=map_type, pt=pt)
     # Инициализируем pygame
     pygame.init()
     screen = pygame.display.set_mode((600, 450))
