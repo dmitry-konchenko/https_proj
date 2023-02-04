@@ -1,7 +1,8 @@
 from PyQt5.QtWidgets import QMainWindow
+from PyQt5.QtCore import Qt
 from window_ui import Ui_MainWindow
 from static_maps_api import get_map
-from PyQt5.QtGui import QPixmap
+from PyQt5.QtGui import QPixmap, QKeyEvent
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -15,6 +16,23 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def _init_ui(self) -> None:
         ...
+
+    def keyPressEvent(self, event: QKeyEvent) -> None:
+        previous_zoom = self._map_zoom
+        if event.key() == Qt.Key_PageUp:
+            self._map_zoom += 1
+        if event.key() == Qt.Key_PageDown:
+            self._map_zoom -= 1
+        self._map_zoom = self.clip_zoom(self._map_zoom, 1, 16)
+        if previous_zoom != self._map_zoom:
+            self._refresh_map()
+
+    def clip_zoom(self, zoom: int, min_zoom: int, max_zoom: int) -> int:
+        if zoom < min_zoom:
+            return min_zoom
+        if zoom > max_zoom:
+            return max_zoom
+        return zoom
 
     def _refresh_map(self) -> None:
         image_data = get_map(ll=self._map_ll, zoom=self._map_zoom, map_type=self._map_l)
