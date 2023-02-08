@@ -50,3 +50,4 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         pixmap = QPixmap()
         pixmap.loadFromData(image_data)
         self.map_label.setPixmap(pixmap)
+
